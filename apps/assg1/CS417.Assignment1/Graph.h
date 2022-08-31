@@ -19,6 +19,7 @@ public:
 	virtual void addEdge(N x, N y) = 0;
 	virtual void deleteEdge(N x, N y) = 0;
 	virtual void print() = 0;
+	virtual bool checkCycle() = 0;
 
 protected:
 	template <class T>

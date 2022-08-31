@@ -40,6 +40,55 @@ private:
 		return NULL;
 	}
 
+	bool checkCycle(N cycleTarget, vector<int> matrix, set<N>* entriesChecked) {
+		for (int i = 0; i < numEntries; i++) {
+			if (matrix[i] == 1) {
+				Entry<N>* entry = (*entries)[i];
+				if (checkCycle(cycleTarget, entry->n, 2, entriesChecked)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	bool doesSetContain(set<N>* theSet, N n) {
+		return theSet->find(n) != theSet->end();
+	}
+
+	bool checkCycle(N cycleTarget, N n, int count, set<N>* entriesChecked) {
+
+		vector<int> matrix = getEntry(n)->matrix;
+		entriesChecked->insert(n);
+
+		int edgeCount = 0;
+		for (int i = 0; i < numEntries; i++) {
+			if (matrix[i] == 1) {
+				edgeCount++;
+			}
+		}
+		if (edgeCount == 1) {
+			return false;
+		}
+
+		for (int i = 0; i < numEntries; i++) {
+			if (matrix[i] == 1) {
+				Entry<N>* entry = (*entries)[i];
+				if (count > 2 && entry->n == cycleTarget) {
+					cout << "A cycle exists from " << cycleTarget << " back to itself." << endl;
+					return true;
+				}
+
+				if (!doesSetContain(entriesChecked, entry->n) && checkCycle(cycleTarget, entry->n, count + 1, entriesChecked)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
 public:
 	AdjancyMatrixGraph(int numEntries) {
 
@@ -125,6 +174,21 @@ public:
 		Entry<N> *entryY = getEntry(y);
 		entryX->matrix[entryY->vertex] = 0;
 		entryY->matrix[entryX->vertex] = 0;
+	}
+
+	bool checkCycle() { 
+		for (int i = 0; i < numEntries; i++) {
+			Entry<N>* entry = (*entries)[i];
+			set<N>* entriesChecked = new set<N>();
+			entriesChecked->insert(entry->n);
+			vector<int> matrix = entry->matrix;
+
+			if (checkCycle(entry->n, matrix, entriesChecked)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	void print() {

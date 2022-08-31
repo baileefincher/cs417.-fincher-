@@ -3,6 +3,7 @@
 #include "Graph.h"
 #include <list>
 #include <map>
+#include <set>
 #include <iostream>
 
 template<class N>
@@ -51,6 +52,43 @@ template <class N>
 class AdjancyListGraph : public Graph<N> {
 private:
 	map<N, list<Edge<N>>> vertexMap;
+
+	bool checkCycle(N entry, list <Edge<N>> edges, set<N>* entriesChecked) {
+		for (auto itr = edges.begin(); itr != edges.end(); itr++) {
+			if (checkCycle(entry, itr->getY(), 2, entriesChecked)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	bool doesSetContain(set<N>* theSet, N n) {
+		return theSet->find(n) != theSet->end();
+	}
+
+	bool checkCycle(N entry, N n, int count, set<N>* entriesChecked) {
+
+		list<Edge<N>> edges = vertexMap[n];
+		entriesChecked->insert(n);
+
+		if (edges.size() == 1) {
+			return false;
+		}
+
+		for (auto itr = edges.begin(); itr != edges.end(); itr++) {
+			if (count > 2 && itr->getY() == entry) {
+				cout << "A cycle exists from " << entry << " back to itself. count = " << count << endl;
+				return true;
+			}
+
+			if (!doesSetContain(entriesChecked, itr->getY()) && checkCycle(entry, itr->getY(), count + 1, entriesChecked)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 
 public:
 	AdjancyListGraph() {
@@ -132,6 +170,20 @@ public:
 		Edge<N> edge2(y, x);
 		this->deleteFromList(&vertexMap[x], edge1);
 		this->deleteFromList(&vertexMap[y], edge2);
+	}
+
+	bool checkCycle() {
+		for (auto mapItr = vertexMap.begin(); mapItr != vertexMap.end(); mapItr++) {
+			N entry = mapItr->first;
+			set<N>* entriesChecked = new set<N>();
+			entriesChecked->insert(entry);
+			list<Edge<N>> edges = mapItr->second;
+			if (checkCycle(entry, edges, entriesChecked)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	void print() {

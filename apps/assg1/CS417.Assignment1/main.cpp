@@ -20,17 +20,35 @@ void test(Graph<string> *graph) {
 
 }
 
+void testCycle(Graph<string>* graph) {
+	graph->addNode("A");
+	graph->addNode("B");
+	graph->addNode("C");
+	graph->addNode("D");
+
+	graph->addEdge("A", "B");
+	graph->addEdge("B", "C");
+	graph->addEdge("C", "D");
+	graph->addEdge("D", "A");
+	graph->print();
+
+	graph->checkCycle();
+
+}
+
 int main() {
 	Graph<string> *graph;
 	cout << "testing adjancy list..." << endl;
 	graph = new AdjancyListGraph<string>();
-	test(graph);
+	testCycle(graph);
 	delete graph;
+
 
 	cout << endl << endl;
 	cout << "testing adjancy matrix..." << endl;
 	graph = new AdjancyMatrixGraph<string>(4);
-	test(graph);
+	testCycle(graph);
 	delete graph;
+	
 }
 
