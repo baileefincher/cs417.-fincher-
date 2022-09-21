@@ -136,7 +136,7 @@ int main() {
 		<< "Enter the time (in minutes) for how long the simulation should be run: ";
 	int timer;
 	cin >> timer;
-	while (timer < 1 || isdigit(timer)) {
+	while (timer < 1) {
 		cout << "Invalid Input. Try Again" << endl;
 		cin >> timer;
 	}
